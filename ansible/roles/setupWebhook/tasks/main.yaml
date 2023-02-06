@@ -1,0 +1,21 @@
+- name: Setup telegram webhook
+  debug:
+    msg: Setup telegram webhook
+
+- name: Config VirtualSerivce
+  kubernetes.core.k8s:
+    host: "{{ k8sUrl }}"
+    validate_certs: false
+    api_key: "{{ k8sApiKey }}"
+    template:
+      - path: 5-virtual-service.yaml.j2
+
+- name: Send request to set telegram webhook url
+  ansible.builtin.uri:
+    url: "https://api.telegram.org/bot{{ botToken }}/setWebhook"
+    method: POST
+    body_format: json
+    body:
+      url: "https://{{ webhookDomain }}/"
+    headers:
+      Content-Type: application/json

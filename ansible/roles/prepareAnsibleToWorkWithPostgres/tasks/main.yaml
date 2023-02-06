@@ -1,0 +1,14 @@
+- name: Preparing steps to iteract with postgresql
+  debug:
+    msg: Preparing steps to iteract with postgresql
+
+- name: Install python3-psycopg2
+  ansible.builtin.apt:
+    name: python3-psycopg2
+  become: true
+
+- name: Install collection community.postgresql
+  community.general.ansible_galaxy_install:
+    type: collection
+    name: community.postgresql
+

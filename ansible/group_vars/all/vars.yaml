@@ -1,0 +1,31 @@
+### k8s
+# add to namespace label istio-injection: <enable|disable>
+istioEnabled: enabled
+# k8s API url
+k8sUrl: https://192.168.1.100:16443
+# k8s cluster domain
+k8sClusterDomain: svc.cluster.local
+# ingress gateway's namespace
+ingressNamespace: ingress-gw
+# ingress gateway's name
+ingresGWConfigurationName: ingress-gateway-configuration
+# docker registry URL
+dockerRegistryUrl: registry.arh.net.ru
+# storage class name
+storageClassName: microk8s-hostpath
+# Node ip
+nodeIp: 192.168.1.100
+
+### DB
+# Postgres admin user's name
+postgresAdminUsername: postgres
+# Apps database name
+appsDatabaseName: vocabularydb
+# Apps database username
+appsDatabaseUsername: vocabularyuser
+
+### APP
+# bh image name
+bhImageName: anpotashev/bh
+# applications version
+appVersion: 1.0.0

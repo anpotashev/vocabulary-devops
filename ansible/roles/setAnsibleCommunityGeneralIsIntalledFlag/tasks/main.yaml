@@ -1,0 +1,8 @@
+- name: Setting that community.general is insalled
+  debug:
+    msg: Setting flag that community.general is insalled
+
+- name: Create "flag" file
+  file:
+    path: ~/.community.general.installed
+    state: touch

@@ -1,0 +1,12 @@
+---
+- hosts: all
+  connection: local
+
+  roles:
+    - role: checkIfAgentPrepared
+    - role: prepareAnsibleToWorkWithK8s
+      when: agentNotPrepared
+    - role: prepareAnsibleToWorkWithPostgres
+      when: agentNotPrepared
+    - role: setAgentPreparationDoneFlag
+      when: agentNotPrepared

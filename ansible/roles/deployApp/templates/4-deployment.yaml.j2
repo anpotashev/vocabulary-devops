@@ -1,0 +1,87 @@
+{% set enableDebug = lookup('env', 'ENABLE_DEBUG')|bool %}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: bh-config
+  namespace: {{ namespaceName }}
+data:
+  JDBC_URL: jdbc:postgresql://postgres-service/{{ appsDatabaseName }}
+  DB_USER: {{ appsDatabaseUsername }}
+  BOT_NAME: {{ botName }}
+  SPRING_PROFILES_ACTIVE: {{ springProfiles }}
+  WEBHOOK_URL: https://{{ webhookDomain }}/
+  JAVA_OPTS: -Dfile.encoding=UTF-8
+{% if enableDebug %}
+  BPL_DEBUG_ENABLED: "true"
+{% endif %}
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: bh-secret
+  namespace: {{ namespaceName }}
+type: Opaque
+data:
+  DB_PASSWORD: {{ appsDatabaseUserPassword|b64encode }}
+  BOT_TOKEN: {{ botToken|b64encode }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bh
+  namespace: {{ namespaceName }}
+  labels:
+    version: {{ BUILD_VERSION }}
+    build: "{{ BUILD_NUMBER }}"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bh
+  template:
+    metadata:
+      labels:
+        app: bh
+    spec:
+      containers:
+        - name: bh
+          image: {{ dockerRegistryUrl }}/anpotashev/bh:{{ BUILD_VERSION }}-{{ BUILD_NUMBER }}
+          imagePullPolicy: "IfNotPresent"
+          ports:
+            - name: http
+              containerPort: 8080
+{% if enableDebug %}
+            - name: remote-debug
+              containerPort: 8000
+{% endif %}
+          envFrom:
+            - configMapRef:
+                name: bh-config
+            - secretRef:
+                name: bh-secret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: bh-service
+  namespace: {{ namespaceName }}
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8080
+  selector:
+    app: bh
+{% if enableDebug %}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: bh-service-remote-debug
+  namespace: {{ namespaceName }}
+spec:
+  type: NodePort
+  ports:
+    - port: 8000
+  selector:
+    app: bh
+{% endif %}

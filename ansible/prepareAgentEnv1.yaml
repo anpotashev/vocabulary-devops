@@ -1,0 +1,10 @@
+---
+- hosts: all
+  connection: local
+
+  roles:
+    - role: checkIfAnsibleCommunityGeneralIsInstalled
+    - role: installAnsibleCommunityGeneral
+      when: communityGeneralIsNotInstalled
+    - role: setAnsibleCommunityGeneralIsIntalledFlag
+      when: communityGeneralIsNotInstalled

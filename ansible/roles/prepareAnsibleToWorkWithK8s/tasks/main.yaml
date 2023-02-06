@@ -1,0 +1,17 @@
+- name: Preparing steps to iteract with k8s
+  debug:
+    msg: Preparing steps to iteract with k8s
+
+- name: Install pip packages
+  ansible.builtin.pip:
+    name:
+      - openshift
+      - pyyaml
+      - kubernetes
+  become: true
+
+- name: Install collection kubernetes.core
+  community.general.ansible_galaxy_install:
+    type: collection
+    name: kubernetes.core
+

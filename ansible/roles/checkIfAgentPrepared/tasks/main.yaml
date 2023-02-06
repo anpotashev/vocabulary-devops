@@ -1,0 +1,12 @@
+- name: Checking if agent preparation is done or not
+  debug:
+    msg: Checking if agent preparation is done or not
+
+- name: Check that the .environment_done exists
+  stat:
+    path: ~/.environment_done
+  register: result
+
+- name: Save result to variable
+  set_fact:
+    agentNotPrepared: "{{ not result.stat.exists| bool }}"

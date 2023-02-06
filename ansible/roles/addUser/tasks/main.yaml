@@ -1,0 +1,33 @@
+- name: Creating user
+  debug:
+    msg: "Creating user. {{ USERNAME }} - {{ KEY_FILE_PATH }} - {{ HOSTNAME }} - {{ lookup('ansible.builtin.env', 'BECOME_PASSWORD') }}"
+
+- name: Create public ssh key from the private key
+  command: "ssh-keygen -f {{ KEY_FILE_PATH }} -y"
+  delegate_to: 127.0.0.1
+  register: generate_pubkey_result
+
+- name: Create a login user
+  user:
+    name: "{{ USERNAME }}"
+    password: '*'
+    shell: /bin/bash
+    state: present
+  become: true
+
+- name: Configure sudoer access
+  community.general.sudoers:
+    name: allow-all-sudo
+    state: present
+    user: "{{ USERNAME }}"
+    commands: ALL
+    nopassword: true
+  become: true
+
+- name: Add pub key
+  authorized_key:
+    user: "{{ USERNAME }}"
+    state: present
+    manage_dir: yes
+    key: "{{ generate_pubkey_result.stdout }}"
+  become: true

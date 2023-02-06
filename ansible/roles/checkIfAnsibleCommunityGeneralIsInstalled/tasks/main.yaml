@@ -1,0 +1,12 @@
+- name: Checking if ansible community general collection is installed
+  debug:
+    msg: Checking if agent preparation is done or not
+
+- name: Check that the .environment_done exists
+  stat:
+    path: ~/.community.general.installed
+  register: result
+
+- name: Save result to variable
+  set_fact:
+    communityGeneralIsNotInstalled: "{{ not result.stat.exists| bool }}"

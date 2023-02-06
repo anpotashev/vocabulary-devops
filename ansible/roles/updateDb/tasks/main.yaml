@@ -1,0 +1,47 @@
+- name: Update database
+  debug:
+    msg: updating DB
+
+- name: Get a postgres service node port mapped to 5432
+  kubernetes.core.k8s_info:
+    host: "{{ k8sUrl }}"
+    validate_certs: false
+    api_key: "{{ k8sApiKey }}"
+    api_version: v1
+    kind: Service
+    name: postgres
+    namespace: "{{ namespaceName }}"
+  register: postgres_service_info
+
+- name: parse postgres_service_info to find postgres node port
+  set_fact:
+    postgresNodePort: "{{ postgres_service_info| json_query('resources[0].spec.ports[0].nodePort')|int }}"
+
+- name: prepare jdbc url variable
+  set_fact:
+    postgresJdbcUrl: "jdbc:postgresql://{{ nodeIp }}:{{ postgresNodePort }}/{{ appsDatabaseName }}"
+
+- name: Download an sql.jar from a release repository
+  community.general.maven_artifact:
+    group_id: 	ru.net.arh.vocabulary
+    artifact_id: sql
+    version: BUILD_VERSION
+    repository_url: 'https://nexus.arh.net.ru/repository/maven-releases/'
+    dest: ./sql.jar
+  when: RELEASE|bool
+
+- name: Download an sql.jar from a snapshot repository
+  community.general.maven_artifact:
+    group_id: 	ru.net.arh.vocabulary
+    artifact_id: sql
+    version: "{{BUILD_VERSION}}-SNAPSHOT"
+    repository_url: 'https://nexus.arh.net.ru/repository/maven-snapshots/'
+    dest: ./sql.jar
+  when: not RELEASE|bool
+
+- name: run sql.jar to update DB
+  shell: "java -jar sql.jar "
+  environment:
+    JDBC_URL: "{{ postgresJdbcUrl }}"
+    DB_USER: "{{ appsDatabaseUsername }}"
+    DB_PASSWORD: "{{ appsDatabaseUserPassword }}"

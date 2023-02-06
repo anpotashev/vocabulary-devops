@@ -1,0 +1,6 @@
+namespaceName: vocabulary-test
+storageSize: 2Gi
+botName: vocabulary_test1221_bot
+# spring profiles (webhook or empty string)
+springProfiles: webhook
+webhookDomain: vocabulary-test.arh.net.ru

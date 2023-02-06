@@ -1,0 +1,17 @@
+---
+- hosts: "{{HOST}}"
+  connection: local
+
+  roles:
+    - role: createNamespace
+      when: PREPARE_NAMESPACE|bool
+    - role: createDatabase
+      when: PREPARE_NAMESPACE|bool
+    - role: updateDb
+      when: UPDATE_DB|bool
+    - role: deployApp
+      when: DEPLOY_APP|bool
+    - role: setupWebhook
+      when:
+        - DEPLOY_APP|bool
+        - springProfiles == "webhook"

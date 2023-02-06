@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv-{{ namespaceName }}
+spec:
+  storageClassName: {{ storageClassName }}
+  claimRef:
+    namespace: {{ namespaceName }}
+    name: pvc-postgresql
+  capacity:
+    storage: {{ storageSize }}
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/mnt/data_{{ namespaceName }}"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pvc-postgresql
+  namespace: {{ namespaceName }}
+spec:
+  storageClassName: {{ storageClassName }}
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ storageSize }}

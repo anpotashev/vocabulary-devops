@@ -1,0 +1,13 @@
+- name: Update database
+  debug:
+    msg: "Creating namespace {{ namespaceName }}"
+
+- name: Create a k8s namespace and deploy postresql DB
+  kubernetes.core.k8s:
+    host: "{{ k8sUrl }}"
+    validate_certs: false
+    api_key: "{{ k8sApiKey }}"
+    template:
+      - path: 1-namespace.yaml.j2
+      - path: 2-persitence.yaml.j2
+      - path: 3-database.yaml.j2

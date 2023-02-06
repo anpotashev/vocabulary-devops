@@ -1,0 +1,12 @@
+- name: Deploy APP
+  debug:
+    msg: Deploying APP
+
+- name: Deploy APP
+  kubernetes.core.k8s:
+    host: "{{ k8sUrl }}"
+    validate_certs: false
+    api_key: "{{ k8sApiKey }}"
+    template:
+      - path: 4-deployment.yaml.j2
+

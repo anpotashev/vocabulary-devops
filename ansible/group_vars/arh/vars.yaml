@@ -1,0 +1,6 @@
+namespaceName: vocabulary
+storageSize: 10Gi
+botName: vocabulary_prom_bot
+# spring profiles (webhook or empty string)
+springProfiles: webhook
+webhookDomain: vocabulary.arh.net.ru

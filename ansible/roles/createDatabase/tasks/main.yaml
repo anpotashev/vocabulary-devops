@@ -1,0 +1,45 @@
+- name: Update database
+  debug:
+    msg: Create database and user
+
+- name: Get a postgres service node port mapped to 5432
+  kubernetes.core.k8s_info:
+    host: "{{ k8sUrl }}"
+    validate_certs: false
+    api_key: "{{ k8sApiKey }}"
+    api_version: v1
+    kind: Service
+    name: postgres
+    namespace: "{{ namespaceName }}"
+  register: postgres_service_info
+
+- name: parse postgres_service_info to find postgres node port
+  set_fact:
+    postgresNodePort: "{{ postgres_service_info| json_query('resources[0].spec.ports[0].nodePort')|int }}"
+
+- name: Wait for postgres is started
+  ansible.builtin.wait_for:
+    port: "{{ postgresNodePort }}"
+    host: "{{ nodeIp }}"
+    delay: 10
+    timeout: 300
+
+- name: Create postgres user
+  community.postgresql.postgresql_user:
+    login_host: "{{ nodeIp }}"
+    login_user: "{{ postgresAdminUsername }}"
+    login_password: "{{ postgresAdminPassword }}"
+    port: "{{ postgresNodePort }}"
+    name: "{{ appsDatabaseUsername }}"
+    password: "{{ appsDatabaseUserPassword }}"
+
+- name: Create postgres DB
+  community.postgresql.postgresql_db:
+    login_host: "{{ nodeIp }}"
+    login_user: "{{ postgresAdminUsername }}"
+    login_password: "{{ postgresAdminPassword }}"
+    port: "{{ postgresNodePort }}"
+    name: "{{ appsDatabaseName }}"
+    owner: "{{ appsDatabaseUsername }}"
+
+

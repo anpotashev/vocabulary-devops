@@ -1,0 +1,8 @@
+- name: Setting that agent preparation is finished
+  debug:
+    msg: Fixing that agent preparation is finished
+
+- name: Setting "flag" file
+  file:
+    path: ~/.environment_done
+    state: touch

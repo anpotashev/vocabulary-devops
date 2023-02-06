@@ -1,0 +1,17 @@
+kind: VirtualService
+apiVersion: networking.istio.io/v1alpha3
+metadata:
+  namespace: "{{ ingressNamespace }}"
+  name: "{{ webhookDomain | replace('.','-')}}"
+spec:
+  hosts:
+    - "{{ webhookDomain }}"
+  gateways:
+    - "{{ ingresGWConfigurationName }}"
+  http:
+    - name: http
+      route:
+        - destination:
+            host: "bh-service.{{ namespaceName }}.{{ k8sClusterDomain }}"
+            port:
+              number: 8080
