@@ -11,6 +11,7 @@
       when: UPDATE_DB|bool
     - role: deployApp
       when: DEPLOY_APP|bool
+    - role: setTelegramCommands
     - role: setupWebhook
       when:
         - DEPLOY_APP|bool

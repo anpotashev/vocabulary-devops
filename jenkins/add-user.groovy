@@ -7,6 +7,7 @@ if (params.JOB_RESET || params.JOB_RESET == null) {
                             credentials(name: 'BECOME_PASSWORD_CREDENTIALS_ID', credentialType: 'org.jenkinsci.plugins.plaincredentials.impl.StringCredentialsImpl', defaultValue: '', description: 'Become password', required: true),
                             string(name: 'HOSTNAME', defaultValue: '', description: 'Hostname or IP address', trim: true),
                             booleanParam(name: 'JOB_RESET', defaultValue: false, description: 'Job reset'),
+                            booleanParam(name: 'CLEAR_WORKSPACE', defaultValue: true, description: 'Clear workspace'),
                     ]
             ),
             buildDiscarder(logRotator(numToKeepStr: '3')),
@@ -30,7 +31,7 @@ pipeline {
         }
         stage('Checkout') {
             steps {
-                git branch: 'build', url: "https://github.com/anpotashev/vocabulary-devops.git"
+                git branch: 'master', url: "https://github.com/anpotashev/vocabulary-devops.git"
             }
         }
         stage('Prepare agent.') {
@@ -70,7 +71,11 @@ pipeline {
     post {
         // Clean after build
         always {
-            cleanWs()
+            script {
+                if (params.CLEAR_WORKSPACE) {
+                    cleanWs()
+                }
+            }
         }
     }
 }

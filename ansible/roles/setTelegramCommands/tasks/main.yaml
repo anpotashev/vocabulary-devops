@@ -1,0 +1,21 @@
+- name: Set telegram bot commands
+  debug:
+    msg: Set telegram bot commands
+
+- name: Send request to setup telegram bot commands
+  ansible.builtin.uri:
+    url: "https://api.telegram.org/bot{{ botToken }}/setMyCommands"
+    method: POST
+    body_format: json
+    body:
+      commands:
+        - command: ping
+          description: Test service
+        - command: quest
+          description: Quest new word
+        - command: dictionary
+          description: Manage dictionaries
+        - command: lang
+          description: Set the interface language
+    headers:
+      Content-Type: application/json

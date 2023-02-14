@@ -10,6 +10,7 @@ properties([
                         string(name: 'BUILD_VERSION', defaultValue: '1.0.0', description: 'Build version', trim: true),
                         string(name: 'BUILD_NUMBER', defaultValue: '0', description: 'Build number', trim: true),
                         booleanParam(name: 'JOB_RESET', defaultValue: false, description: 'Job reset'),
+                        booleanParam(name: 'CLEAR_WORKSPACE', defaultValue: true, description: 'Clear workspace'),
                 ]
         ),
         buildDiscarder(logRotator(numToKeepStr: '3')),
@@ -43,7 +44,7 @@ pipeline {
         }
         stage('Checkout') {
             steps {
-                git branch: 'build', url: "https://github.com/anpotashev/vocabulary-devops.git"
+                git branch: 'master', url: "https://github.com/anpotashev/vocabulary-devops.git"
             }
         }
         stage('Prepare agent. Stage 1') {
@@ -98,7 +99,11 @@ pipeline {
     post {
         // Clean after build
         always {
-            cleanWs()
+            script {
+                if (params.CLEAR_WORKSPACE) {
+                    cleanWs()
+                }
+            }
         }
     }
 }

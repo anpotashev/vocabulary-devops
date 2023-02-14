@@ -4,6 +4,7 @@ if (params.JOB_RESET ||  params.JOB_RESET == null) {
                     [
                             string(name: 'BRANCH', defaultValue: 'master', description: 'Git branch to build', trim: true),
                             booleanParam(name: 'JOB_RESET', defaultValue: false, description: 'Job reset'),
+                            booleanParam(name: 'CLEAR_WORKSPACE', defaultValue: true, description: 'Clear workspace'),
                     ]
             ),
             // хранить информацию о 20 последних сборках
@@ -50,7 +51,11 @@ pipeline {
     post {
         // Clean after build
         always {
-            cleanWs()
+            script {
+                if (params.CLEAR_WORKSPACE) {
+                    cleanWs()
+                }
+            }
         }
     }
 }

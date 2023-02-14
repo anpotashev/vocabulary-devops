@@ -1,3 +1,4 @@
 /.vaultpass.txt
 .idea
+*.iml
 tmp

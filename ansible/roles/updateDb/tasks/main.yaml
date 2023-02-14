@@ -25,7 +25,7 @@
   community.general.maven_artifact:
     group_id: 	ru.net.arh.vocabulary
     artifact_id: sql
-    version: BUILD_VERSION
+    version: "{{ BUILD_VERSION }}"
     repository_url: 'https://nexus.arh.net.ru/repository/maven-releases/'
     dest: ./sql.jar
   when: RELEASE|bool
@@ -34,7 +34,7 @@
   community.general.maven_artifact:
     group_id: 	ru.net.arh.vocabulary
     artifact_id: sql
-    version: "{{BUILD_VERSION}}-SNAPSHOT"
+    version: "{{ BUILD_VERSION }}-SNAPSHOT"
     repository_url: 'https://nexus.arh.net.ru/repository/maven-snapshots/'
     dest: ./sql.jar
   when: not RELEASE|bool
