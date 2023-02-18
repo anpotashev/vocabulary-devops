@@ -3,6 +3,7 @@ if (params.JOB_RESET ||  params.JOB_RESET == null) {
             parameters(
                     [
                             string(name: 'BRANCH', defaultValue: 'master', description: 'Git branch to build', trim: true),
+                            booleanParam(name: 'RUN_TESTS', defaultValue: true, description: 'Run tests'),
                             booleanParam(name: 'JOB_RESET', defaultValue: false, description: 'Job reset'),
                             booleanParam(name: 'CLEAR_WORKSPACE', defaultValue: true, description: 'Clear workspace'),
                     ]
@@ -37,6 +38,20 @@ pipeline {
             steps {
                 git branch: params.BRANCH,
                         url: 'https://github.com/anpotashev/vocabulary-study.git'
+            }
+        }
+        stage('Run tests') {
+            steps {
+                script {
+                    if (params.RUN_TESTS) {
+                        withCredentials([usernamePassword(credentialsId: 'testTelegramCredentialsId',
+                                usernameVariable: 'BOT_NAME', passwordVariable: 'BOT_TOKEN')]) {
+                            configFileProvider([configFile(fileId: 'maven-settings.xml', variable: 'MAVEN_SETTINGS_XML')]) {
+                                sh 'mvn -DBOT_NAME=$BOT_NAME -DBOT_TOKEN=$BOT_TOKEN test -s $MAVEN_SETTINGS_XML'
+                            }
+                        }
+                    }
+                }
             }
         }
         stage('Build applications, deploy them to nexus repository. Build and push docker image') {
