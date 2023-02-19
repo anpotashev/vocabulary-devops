@@ -3,6 +3,8 @@
   connection: local
 
   roles:
+    - role: deployHazelcast
+      when: DEPLOY_HAZELCAST|bool
     - role: createNamespace
       when: PREPARE_NAMESPACE|bool
     - role: createDatabase

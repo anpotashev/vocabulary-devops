@@ -4,5 +4,5 @@
 
 - name: Setting "flag" file
   file:
-    path: ~/.environment_done
+    path: ~/.environment_done.v2
     state: touch

@@ -2,6 +2,7 @@ properties([
         parameters(
                 [
                         choice(choices: ['TEST', 'PROD'], description: 'Stand', name: 'STAND'),
+                        booleanParam(name: 'DEPLOY_HAZELCAST', defaultValue: false, description: 'Deploy hazelcast in k8s'),
                         booleanParam(name: 'PREPARE_NAMESPACE', defaultValue: false, description: 'Prepare namespace in k8s'),
                         booleanParam(name: 'UPDATE_DB', defaultValue: true, description: 'Update database'),
                         booleanParam(name: 'DEPLOY_APP', defaultValue: true, description: 'Deploy application'),
@@ -44,7 +45,7 @@ pipeline {
         }
         stage('Checkout') {
             steps {
-                git branch: 'master', url: "https://github.com/anpotashev/vocabulary-devops.git"
+                git branch: 'feature/7', url: "https://github.com/anpotashev/vocabulary-devops.git"
             }
         }
         stage('Prepare agent. Stage 1') {
@@ -80,6 +81,7 @@ pipeline {
                                 vaultCredentialsId: "vault_pass",
                                 inventory: "hosts-${host}.txt",
                                 extraVars: [
+                                        DEPLOY_HAZELCAST : params.DEPLOY_HAZELCAST,
                                         PREPARE_NAMESPACE: params.PREPARE_NAMESPACE,
                                         UPDATE_DB        : params.UPDATE_DB,
                                         DEPLOY_APP       : params.DEPLOY_APP,

@@ -4,7 +4,7 @@
 
 - name: Check that the .environment_done exists
   stat:
-    path: ~/.environment_done
+    path: ~/.environment_done.v2
   register: result
 
 - name: Save result to variable

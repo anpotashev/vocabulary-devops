@@ -1,0 +1,20 @@
+- name: Deploy hazelcast
+  debug:
+    msg: Deploying hazelcast
+
+- name: Add hazelcast chart repo
+  kubernetes.core.helm_repository:
+    name: hazelcast
+    repo_url: "https://hazelcast-charts.s3.amazonaws.com/"
+
+- name: Deploy hazelcast
+  kubernetes.core.helm:
+    host: "{{ k8sUrl }}"
+    validate_certs: false
+    api_key: "{{ k8sApiKey }}"
+    name: hz-hazelcast
+    chart_ref: hazelcast/hazelcast
+    release_namespace: hazelcast
+    create_namespace: true
+    update_repo_cache: true
+
